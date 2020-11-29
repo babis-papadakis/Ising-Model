@@ -34,7 +34,7 @@ per.neigh <- function(N,i,j) {
   if (j == N) jp1 <- 1 else jp1 <- j+1
   list(c(im1,j),c(i,jm1),c(i,jp1),c(ip1,j))
 }
-#energy
+#energy calculation
 energy <- function(config, J) {
   config <- as.matrix(config)
   N <- nrow(config);
@@ -44,11 +44,15 @@ energy <- function(config, J) {
       coord <- per.neigh(N,i,j)
       for (b in seq_along(coord)) {
         w <- coord[[b]]; 
-        e <- e - (J  as.numeric(config[i,j])  as.numeric(config[w[1],w[2]]))
+        e <- e - (J * as.numeric(config[i,j]) * as.numeric(config[w[1],w[2]]))
       }
     }
   }
   e
+}
+bolz.fact <- function(energy, temp){exp(-energy/temp)}
+prob.config<-function(config,part,J,temp){
+  bolt.fact(energy(config,J), temp)/part
 }
 #Image config
 plot.config <- function(config){
@@ -58,3 +62,22 @@ plot.config <- function(config){
 magnetization <-function(config){
   sum(as.vector(config))
 }
+
+#plot
+plot.all.configs = function(bla){
+  for (i in 1:length(bla)) {
+    y=bla[[i]];
+    mode(y)="numeric"
+    image(y,col= grey(seq(0,1)))
+  }
+}
+#energy example
+ene =  c()
+for(i in 1:length(all.configs.4)){
+  ene = c(ene,energy(all.configs.4[[i]],1))
+}
+as.data.frame(table(ene))
+
+
+
+
